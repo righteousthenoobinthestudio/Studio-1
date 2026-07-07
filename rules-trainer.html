@@ -63,7 +63,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
   .tile,.opt,button{transition:background .15s,transform .15s,box-shadow .15s;}
   .tile:hover,.opt:not(:disabled):hover{transform:translateY(-1px);}
 }
-.bar{display:flex;gap:8px;align-items:center;margin:1rem 0;flex-wrap:wrap;}
+.bar{display:flex;gap:8px;align-items:center;justify-content:center;margin:1rem 0;flex-wrap:wrap;}
 .statsbar{display:flex;justify-content:center;gap:8px;margin:14px 0 0;font-size:14px;}
 .chip{background:var(--gold-bg);color:var(--gold-text);border:1px solid var(--gold-border);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums;}
 .cardbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
@@ -80,8 +80,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 .trow.no{background:var(--bad-bg);border-color:var(--bad-border);color:var(--bad-text);}
 .trow .tyours{opacity:.85;font-size:13px;margin-top:2px;}
 .tsummary{font-family:var(--serif);font-size:20px;font-weight:600;margin:12px 0 4px;text-align:center;}
-.banner{background:var(--gold-bg);color:var(--gold-text);border:1px solid var(--gold-border);border-left:4px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:14px;margin:0 0 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.banner button{border-color:var(--gold-border);color:var(--gold-text);}
 .flashcard{min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--serif);font-size:21px;font-weight:600;cursor:pointer;user-select:none;padding:24px;position:relative;}
 .flashcard::after{content:"§";position:absolute;right:16px;bottom:0;font-size:46px;font-family:var(--serif);color:var(--gold);opacity:.16;pointer-events:none;}
 .cardactions{display:flex;gap:8px;justify-content:center;margin-top:12px;}
@@ -101,11 +99,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
     <p class="muted">Memorise your Rules of Professional Conduct (RPC 2023) with ease.</p>
   </div>
 </header>
-
-<div id="srsBanner" class="banner" style="display:none;">
-  <span id="srsBannerText"></span>
-  <button id="srsReviewBtn">Review now</button>
-</div>
 
 <details class="ribbon" id="setRibbon">
   <summary>
@@ -352,7 +345,7 @@ function srsMark(num, ok){
   const s=srsLoad(); const e=s[num]||{box:0};
   e.box = ok ? Math.min(e.box+1, INTERVALS.length) : 0;
   e.due = Date.now() + (e.box>0 ? INTERVALS[e.box-1] : 10*60e3);
-  s[num]=e; srsSave(s); updateBanner();
+  s[num]=e; srsSave(s);
 }
 function dueRules(){ const s=srsLoad(); return RULES.filter(r=>s[r[0]] && s[r[0]].due<=Date.now()); }
 function nextDue(){
@@ -367,11 +360,6 @@ function rel(ms){
   if(h<24) return "in about "+h+" hour"+(h>1?"s":"");
   const d=Math.round(h/24);
   return d===1 ? "tomorrow" : "in "+d+" days";
-}
-function updateBanner(){
-  const due=dueRules();
-  $("srsBanner").style.display = due.length ? "flex" : "none";
-  if(due.length) $("srsBannerText").textContent = due.length+" rule"+(due.length>1?"s are":" is")+" due for review.";
 }
 
 let qDeck=[], qPool=[], qNum=0, qRight=0;
@@ -610,10 +598,7 @@ const STARTERS={quiz:quizStart, match:matchStart, order:orderStart, cards:()=>ca
 let lastMode="quiz";
 $("replayBtn").addEventListener("click",()=>{ STARTERS[lastMode](); });
 document.querySelectorAll(".modebtn").forEach(b=>b.addEventListener("click",()=>{ lastMode=b.dataset.m; STARTERS[lastMode](); }));
-$("srsReviewBtn").addEventListener("click",()=>{ lastMode="cards"; cardsStart(dueRules()); });
 refreshSetUI();
-updateBanner();
-setInterval(updateBanner, 60e3);
 quizStart();
 </script>
 </body>
