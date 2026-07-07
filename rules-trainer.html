@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefed</title>
+<style>
+:root{
+  --bg:#edefe6; --card:#fcfcf8; --border:#ccd3c8; --text:#1d2a22; --muted:#5f6b63;
+  --green:#1e5c45; --on-green:#f4f3e7;
+  --good-bg:#ddeee2; --good-text:#14503a; --good-border:#4b8f6c;
+  --gold:#a5791d; --gold-bg:#f6eccd; --gold-text:#6b4e0e; --gold-border:#c19a3f;
+  --bad-bg:#f8e6e2; --bad-text:#702731; --bad-border:#c2635a;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#141a16; --card:#1e2620; --border:#3a453d; --text:#e8ebe2; --muted:#9caa9e;
+    --green:#2f7052; --on-green:#eafff2;
+    --good-bg:#1d4632; --good-text:#bfe3cd; --good-border:#5da581;
+    --gold:#d9b35f; --gold-bg:#3b2f12; --gold-text:#e7cf8c; --gold-border:#a3852f;
+    --bad-bg:#4a2220; --bad-text:#f0c5bf; --bad-border:#c97b6f;
+  }
+}
+*{box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);max-width:720px;margin:0 auto;padding:24px 16px;}
+.masthead{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;padding:0 0 16px;border-bottom:4px double var(--gold-border);margin:0 0 16px;}
+.masthead h1{font-family:var(--serif);font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;margin:0;text-wrap:balance;}
+.masthead p{margin:3px 0 0;}
+.seal{flex:none;color:var(--gold);}
+button{font:inherit;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:999px;padding:8px 16px;cursor:pointer;}
+button:hover{background:rgba(128,128,128,0.08);}
+button:disabled{opacity:.45;cursor:default;}
+button:disabled:hover{background:transparent;}
+button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);outline-offset:2px;}
+.ribbon{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:16px 0;}
+.ribbon summary{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;list-style:none;flex-wrap:wrap;}
+.ribbon summary::-webkit-details-marker{display:none;}
+.ribbon-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.ribbon-current{font-family:var(--serif);font-size:15px;font-weight:600;}
+.ribbon-caret{margin-left:auto;color:var(--muted);transition:transform .15s;}
+.ribbon[open] .ribbon-caret{transform:rotate(180deg);}
+.ribbon-body{border-top:1px solid var(--border);padding:14px 16px;display:flex;flex-direction:column;gap:14px;}
+.ribbon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;}
+.setchip{display:block;text-align:left;border-radius:12px;padding:10px 12px;}
+.setchip .r{font-family:var(--serif);font-weight:600;font-size:14px;display:block;}
+.setchip .n{font-size:12px;color:var(--muted);display:block;margin-top:2px;}
+.setchip.active{background:var(--green);border-color:var(--green);color:var(--on-green);}
+.setchip.active .n{color:var(--on-green);opacity:.85;}
+.ribbon-len{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.lenbtns{display:flex;gap:6px;}
+.lenbtn.active{background:var(--green);color:var(--on-green);border-color:var(--green);}
+.modebtn.active{background:var(--green);color:var(--on-green);border-color:var(--green);}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 16px;border-radius:12px;}
+.opt.correct{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);}
+.opt.wrong{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}
+.tile{padding:10px 12px;font-size:13px;text-align:center;border-radius:10px;background:var(--card);}
+.tile.num{font-family:var(--serif);font-size:15px;font-weight:600;}
+.tile.sel{background:var(--gold-bg);color:var(--gold-text);border-color:var(--gold-border);box-shadow:0 0 0 1px var(--gold-border);}
+.tile.done{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);pointer-events:none;}
+.tile.bad{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}
+@media (prefers-reduced-motion:no-preference){
+  .tile,.opt,button{transition:background .15s,transform .15s,box-shadow .15s;}
+  .tile:hover,.opt:not(:disabled):hover{transform:translateY(-1px);}
+}
+.bar{display:flex;gap:8px;align-items:center;margin:1rem 0;flex-wrap:wrap;}
+.statsbar{display:flex;justify-content:center;gap:8px;margin:14px 0 0;font-size:14px;}
+.chip{background:var(--gold-bg);color:var(--gold-text);border:1px solid var(--gold-border);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums;}
+.cardbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.muted{font-size:13px;color:var(--muted);}
+#feedback{min-height:24px;font-size:14px;margin:0 0 8px;}
+#qText{font-family:var(--serif);font-size:19px;font-weight:600;margin:0 0 12px;}
+#endTitle{font-family:var(--serif);font-size:24px;font-weight:600;margin:0 0 4px;}
+.tprompt{font-family:var(--serif);font-size:21px;font-weight:600;text-align:center;margin:0 0 12px;}
+#tInput{width:100%;font:inherit;font-size:16px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+#tInput:focus-visible{outline:2px solid var(--gold-border);outline-offset:1px;}
+.trow{border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:14px;}
+.trow.ok{background:var(--good-bg);border-color:var(--good-border);color:var(--good-text);}
+.trow.no{background:var(--bad-bg);border-color:var(--bad-border);color:var(--bad-text);}
+.trow .tyours{opacity:.85;font-size:13px;margin-top:2px;}
+.tsummary{font-family:var(--serif);font-size:20px;font-weight:600;margin:12px 0 4px;text-align:center;}
+.banner{background:var(--gold-bg);color:var(--gold-text);border:1px solid var(--gold-border);border-left:4px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:14px;margin:0 0 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.banner button{border-color:var(--gold-border);color:var(--gold-text);}
+.flashcard{min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--serif);font-size:21px;font-weight:600;cursor:pointer;user-select:none;padding:24px;position:relative;}
+.flashcard::after{content:"§";position:absolute;right:16px;bottom:0;font-size:46px;font-family:var(--serif);color:var(--gold);opacity:.16;pointer-events:none;}
+.cardactions{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+.cardactions .good{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);}
+.cardactions .bad{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <svg class="seal" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+    <circle cx="22" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="22" cy="22" r="15" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2.6 2.6"/>
+    <text x="22" y="28.5" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="currentColor">§</text>
+  </svg>
+  <div>
+    <h1>Briefed</h1>
+    <p class="muted">Memorise your Rules of Professional Conduct (RPC 2023) with ease.</p>
+  </div>
+</header>
+
+<div id="srsBanner" class="banner" style="display:none;">
+  <span id="srsBannerText"></span>
+  <button id="srsReviewBtn">Review now</button>
+</div>
+
+<details class="ribbon" id="setRibbon">
+  <summary>
+    <span class="ribbon-label">Studying</span>
+    <span id="ribbonCurrent" class="ribbon-current"></span>
+    <span class="ribbon-caret">▾</span>
+  </summary>
+  <div class="ribbon-body">
+    <div class="ribbon-grid" id="setGrid"></div>
+    <div class="ribbon-len">
+      <span class="ribbon-label">Per round</span>
+      <div class="lenbtns" id="lenBtns"></div>
+    </div>
+  </div>
+</details>
+
+<div class="bar">
+  <button class="modebtn" data-m="quiz">Quiz</button>
+  <button class="modebtn" data-m="match">Match</button>
+  <button class="modebtn" data-m="order">Order</button>
+  <button class="modebtn" data-m="cards">Cards</button>
+  <button class="modebtn" data-m="type">Type</button>
+</div>
+
+<div id="feedback"></div>
+
+<div id="pane-quiz">
+  <div class="cardbox">
+    <p id="qText"></p>
+    <div id="qOpts"></div>
+    <p id="qProg" class="muted" style="margin:8px 0 0;"></p>
+  </div>
+</div>
+
+<div id="pane-match" style="display:none;">
+  <p class="muted" style="margin:0 0 8px;">Pair each number with its rule. Fewest misses wins.</p>
+  <div id="mGrid" class="grid"></div>
+</div>
+
+<div id="pane-order" style="display:none;">
+  <p id="oInstr" class="muted" style="margin:0 0 8px;"></p>
+  <div id="oPlaced" style="min-height:28px;font-size:13px;color:var(--good-text);margin:0 0 8px;"></div>
+  <div id="oPool" class="grid"></div>
+</div>
+
+<div id="pane-cards" style="display:none;">
+  <p class="muted" style="margin:0 0 8px;">Tap the card to flip it, then grade yourself honestly.</p>
+  <div class="cardbox">
+    <div id="cFace" class="flashcard"></div>
+    <div id="cActions" class="cardactions" style="visibility:hidden;">
+      <button class="bad" id="cAgain">Again</button>
+      <button class="good" id="cGot">Got it</button>
+    </div>
+    <p id="cProg" class="muted" style="margin:12px 0 0;text-align:center;"></p>
+  </div>
+</div>
+
+<div id="pane-type" style="display:none;">
+  <p class="muted" style="margin:0 0 8px;">Type each rule's title from memory. You're graded at the end.</p>
+  <div class="cardbox" id="tQuizBox">
+    <p id="tPrompt" class="tprompt"></p>
+    <input id="tInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type the rule's title…">
+    <div class="cardactions"><button id="tBack">Back</button><button id="tNext">Next</button></div>
+    <p id="tProg" class="muted" style="margin:12px 0 0;text-align:center;"></p>
+  </div>
+  <div id="tResults" style="display:none;"></div>
+</div>
+
+<div id="pane-end" style="display:none;text-align:center;padding:24px 0;">
+  <p id="endTitle"></p>
+  <p id="endSub" class="muted" style="font-size:14px;margin:0 0 4px;"></p>
+  <p id="endNext" class="muted" style="font-size:14px;margin:0 0 16px;"></p>
+  <button id="replayBtn">Play again</button>
+</div>
+
+<div class="statsbar">
+  <span class="chip">🏆 <span id="score">0</span></span>
+  <span class="chip">🔥 <span id="streak">0</span></span>
+</div>
+
+<script>
+const RULES = [
+  [1,"General responsibility of a lawyer"],
+  [2,"Duty as to admission into the legal profession"],
+  [3,"Aiding the unauthorized practice of the law"],
+  [4,"Avoidance of intermediary in the practice of the law"],
+  [5,"Association for legal practice"],
+  [6,"Retirement from judicial position or public employment"],
+  [7,"Engagement in business"],
+  [8,"Lawyers in salaried employment"],
+  [9,"Practicing fees"],
+  [10,"Seal and stamp"],
+  [11,"Mandatory Continuing Professional Development (CPD)"],
+  [12,"Annual Practicing Certificate"],
+  [13,"Notification of legal practice"],
+  [14,"Dedication and devotion to the cause of the client"],
+  [15,"Representing client within the bounds of the law"],
+  [16,"Representing client competently"],
+  [17,"Conflict of interest"],
+  [18,"Agreement with client"],
+  [19,"Privilege and confidence of a client"],
+  [20,"Lawyer as witness for client"],
+  [21,"Withdrawal from employment"],
+  [22,"Calling at client's house or place of business"],
+  [23,"Dealing with client's property"],
+  [24,"Responsibility for litigation"],
+  [25,"Investigation of facts and Production of witnesses, etc."],
+  [26,"Fellowship and precedence"],
+  [27,"Good faith and fairness among lawyers"],
+  [28,"Associating in matter"],
+  [29,"Change of lawyer"],
+  [30,"Lawyer as officer of court"],
+  [31,"Duty of lawyer to court and conduct in court"],
+  [32,"Candid and fair dealing"],
+  [33,"Trial publicity"],
+  [34,"Relation with judges"],
+  [35,"Lawyer and tribunals"],
+  [36,"Courtroom decorum"],
+  [37,"Employment in criminal cases"],
+  [38,"Lawyer for an indigent accused"],
+  [39,"Advertising and soliciting"],
+  [40,"Note-papers, envelopes and visiting cards"],
+  [41,"Signs and notices"],
+  [42,"Books and articles"],
+  [43,"Change of address"],
+  [44,"Associate and Consultant"],
+  [45,"Lawyer's robes"],
+  [46,"Press, radio and television"],
+  [47,"Instigating controversy or litigation"],
+  [48,"Fees for legal service"],
+  [49,"Retainer"],
+  [50,"Contingent fee arrangement"],
+  [51,"Payment of the expenses of litigation"],
+  [52,"Fixing the amount of the fee"],
+  [53,"Division of fees"],
+  [54,"Offer of compensation or gift by the other party"],
+  [55,"Objectives of this Chapter"],
+  [56,"Application of this Chapter"],
+  [57,"Obligations of a legal practitioner"],
+  [58,"Record Keeping"],
+  [59,"Obligations of NBAAMLC"],
+  [60,"Targeted Financial Sanction"],
+  [61,"Risk based approach"],
+  [62,"Risk types or factors"],
+  [63,"Country geographic risk"],
+  [64,"Client risk"],
+  [65,"Transaction or service risk"],
+  [66,"Documentation of risks"],
+  [67,"Risk management and mitigation"],
+  [68,"Internal risk assessment guidelines"],
+  [69,"Client due diligence"],
+  [70,"Monitoring of clients and specified activities"],
+  [71,"Reporting Obligations"],
+  [72,"Education, training and awareness"],
+  [73,"Self-Regulatory Body"],
+  [74,"Enforcement of these Rules"],
+  [75,"Revocation"],
+  [76,"Effective date"],
+  [77,"Interpretation"],
+  [78,"Citation"]
+];
+const SETS = [
+  {id:"s1",  range:"Rules 1–13",  name:"Practice as a legal practitioner", from:1,  to:13},
+  {id:"s2",  range:"Rules 14–25", name:"Relations with clients",           from:14, to:25},
+  {id:"s3",  range:"Rules 26–29", name:"Relations with other lawyers",     from:26, to:29},
+  {id:"s4",  range:"Rules 30–38", name:"Relations with the court",         from:30, to:38},
+  {id:"s5",  range:"Rules 39–47", name:"Improper attraction of business",  from:39, to:47},
+  {id:"s6",  range:"Rules 48–54", name:"Fees for legal services",          from:48, to:54},
+  {id:"s7",  range:"Rules 55–73", name:"Anti-money laundering",            from:55, to:73},
+  {id:"s8",  range:"Rules 74–78", name:"Final provisions",                 from:74, to:78},
+  {id:"all", range:"Rules 1–78",  name:"The complete rules",               from:1,  to:78}
+];
+const $ = id => document.getElementById(id);
+const shuf = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+let score=0, streak=0, mode=null;
+const PRAISE = ["Nice.","Sharp.","Locked in.","Counsel is on fire.","Objection overruled. Correct.","The bar approves.","Clean hit.","Textbook."];
+const MISS = ["Not that one.","Close, but no.","The examiner frowns.","Strike that from the record.","Try again."];
+
+const SET_KEY="rulesTrainerSet";
+let curSetId="s1";
+try{ curSetId = localStorage.getItem(SET_KEY) || "s1"; }catch(e){}
+if(!SETS.some(s=>s.id===curSetId)) curSetId="s1";
+function curSet(){ return SETS.find(s=>s.id===curSetId) || SETS[0]; }
+function setRules(){ const s=curSet(); return RULES.filter(r=>r[0]>=s.from && r[0]<=s.to); }
+const LEN_KEY="rulesTrainerLen";
+const LEN_CHOICES=[[5,"5"],[10,"10"],[15,"15"],[0,"All"]];
+let roundLen=10;
+try{ const v=parseInt(localStorage.getItem(LEN_KEY),10); if(LEN_CHOICES.some(c=>c[0]===v)) roundLen=v; }catch(e){}
+function lenOf(arr){ return roundLen===0 ? arr.length : Math.min(roundLen, arr.length); }
+function refreshSetUI(){
+  const s=curSet();
+  $("ribbonCurrent").textContent = s.range+" · "+s.name+" — "+(roundLen===0?"whole set":roundLen+" per round");
+  document.querySelectorAll(".setchip").forEach(b=>b.classList.toggle("active", b.dataset.id===curSetId));
+  document.querySelectorAll(".lenbtn").forEach(b=>b.classList.toggle("active", +b.dataset.v===roundLen));
+}
+function pickSet(id){
+  curSetId=id;
+  try{ localStorage.setItem(SET_KEY,curSetId); }catch(e){}
+  refreshSetUI();
+  $("setRibbon").open=false;
+  STARTERS[lastMode]();
+}
+function pickLen(v){
+  roundLen=v;
+  try{ localStorage.setItem(LEN_KEY,String(v)); }catch(e){}
+  refreshSetUI();
+  STARTERS[lastMode]();
+}
+SETS.forEach(s=>{
+  const b=document.createElement("button");
+  b.className="setchip"; b.dataset.id=s.id;
+  b.innerHTML='<span class="r">'+s.range+'</span><span class="n">'+s.name+'</span>';
+  b.addEventListener("click",()=>pickSet(s.id));
+  $("setGrid").appendChild(b);
+});
+LEN_CHOICES.forEach(c=>{
+  const b=document.createElement("button");
+  b.className="lenbtn"; b.dataset.v=c[0]; b.textContent=c[1];
+  b.addEventListener("click",()=>pickLen(c[0]));
+  $("lenBtns").appendChild(b);
+});
+
+function setScore(d){ score+=d; if(score<0)score=0; $("score").textContent=score; }
+function resetScore(){ score=0; streak=0; $("score").textContent=0; $("streak").textContent=0; }
+function setStreak(ok){ streak = ok ? streak+1 : 0; $("streak").textContent=streak; }
+function fb(ok,extra){
+  const m = ok ? PRAISE[Math.floor(Math.random()*PRAISE.length)] : MISS[Math.floor(Math.random()*MISS.length)];
+  $("feedback").textContent = m + (extra||"");
+  $("feedback").style.color = ok ? "var(--good-text)" : "var(--bad-text)";
+}
+function show(m){
+  mode=m;
+  ["quiz","match","order","cards","type","end"].forEach(p=>$("pane-"+p).style.display = p===m ? "block":"none");
+  document.querySelectorAll(".modebtn").forEach(b=>b.classList.toggle("active", b.dataset.m===m));
+  $("feedback").textContent="";
+}
+
+// Spaced repetition: Leitner boxes per rule, persisted in localStorage.
+const SRS_KEY="rulesTrainerSRS";
+const INTERVALS=[60*60e3, 24*3600e3, 3*24*3600e3, 7*24*3600e3];
+function srsLoad(){ try{ return JSON.parse(localStorage.getItem(SRS_KEY))||{}; }catch(e){ return {}; } }
+function srsSave(s){ try{ localStorage.setItem(SRS_KEY,JSON.stringify(s)); }catch(e){} }
+function srsMark(num, ok){
+  const s=srsLoad(); const e=s[num]||{box:0};
+  e.box = ok ? Math.min(e.box+1, INTERVALS.length) : 0;
+  e.due = Date.now() + (e.box>0 ? INTERVALS[e.box-1] : 10*60e3);
+  s[num]=e; srsSave(s); updateBanner();
+}
+function dueRules(){ const s=srsLoad(); return RULES.filter(r=>s[r[0]] && s[r[0]].due<=Date.now()); }
+function nextDue(){
+  const s=srsLoad(); let t=null;
+  Object.values(s).forEach(e=>{ if(e.due>Date.now() && (t===null||e.due<t)) t=e.due; });
+  return t;
+}
+function rel(ms){
+  const m=Math.round(ms/60000);
+  if(m<60) return "in about "+Math.max(m,1)+" minute"+(m>1?"s":"");
+  const h=Math.round(m/60);
+  if(h<24) return "in about "+h+" hour"+(h>1?"s":"");
+  const d=Math.round(h/24);
+  return d===1 ? "tomorrow" : "in "+d+" days";
+}
+function updateBanner(){
+  const due=dueRules();
+  $("srsBanner").style.display = due.length ? "flex" : "none";
+  if(due.length) $("srsBannerText").textContent = due.length+" rule"+(due.length>1?"s are":" is")+" due for review.";
+}
+
+let qDeck=[], qPool=[], qNum=0, qRight=0;
+function quizStart(){
+  resetScore();
+  qPool=setRules();
+  qDeck=shuf(qPool).slice(0, lenOf(qPool));
+  qNum=0; qRight=0; show("quiz"); quizNext();
+}
+function quizNext(){
+  if(qNum>=qDeck.length){ endScreen("Quiz complete", qRight+" of "+qDeck.length+" correct."); return; }
+  const cur=qDeck[qNum];
+  const askNum = Math.random()<0.5;
+  $("qText").textContent = askNum ? "Which is Rule "+cur[0]+"?" : "“"+cur[1]+"” is which rule?";
+  $("qProg").textContent = "Question "+(qNum+1)+" of "+qDeck.length;
+  let others = qPool.filter(r=>r[0]!==cur[0]);
+  if(others.length<3) others = RULES.filter(r=>r[0]!==cur[0]);
+  const wrong = shuf(others).slice(0,3);
+  const opts = shuf([cur].concat(wrong));
+  $("qOpts").innerHTML="";
+  opts.forEach(o=>{
+    const b=document.createElement("button");
+    b.className="opt";
+    b.textContent = askNum ? o[1] : "Rule "+o[0];
+    b.onclick=()=>{
+      const ok = o[0]===cur[0];
+      document.querySelectorAll("#qOpts .opt").forEach(x=>x.disabled=true);
+      b.classList.add(ok?"correct":"wrong");
+      if(!ok){
+        document.querySelectorAll("#qOpts .opt").forEach(x=>{
+          if((askNum && x.textContent===cur[1])||(!askNum && x.textContent==="Rule "+cur[0])) x.classList.add("correct");
+        });
+      }
+      setStreak(ok); srsMark(cur[0], ok);
+      if(ok){ qRight++; const bonus = streak>=3 ? streak : 0; setScore(10+bonus); fb(true, bonus?" +"+(10+bonus)+" (streak bonus)":" +10"); }
+      else { setScore(-3); fb(false," -3"); }
+      qNum++;
+      setTimeout(quizNext, ok?700:1400);
+    };
+    $("qOpts").appendChild(b);
+  });
+}
+
+let mSel=null, mLeft=0, mMiss=0;
+function matchStart(){
+  resetScore();
+  show("match"); mSel=null; mMiss=0;
+  const mSet=setRules();
+  const pairs = shuf(mSet).slice(0, lenOf(mSet));
+  mLeft=pairs.length;
+  const tiles = shuf(pairs.map(r=>({k:r[0],t:"Rule "+r[0],num:true})).concat(pairs.map(r=>({k:r[0],t:r[1]}))));
+  $("mGrid").innerHTML="";
+  tiles.forEach(tl=>{
+    const b=document.createElement("button");
+    b.className="tile"+(tl.num?" num":""); b.textContent=tl.t; b.dataset.k=tl.k;
+    b.onclick=()=>{
+      if(b.classList.contains("sel")){ b.classList.remove("sel"); mSel=null; return; }
+      if(!mSel){ mSel=b; b.classList.add("sel"); return; }
+      if(mSel.dataset.k===b.dataset.k && mSel!==b){
+        mSel.classList.remove("sel"); mSel.classList.add("done"); b.classList.add("done");
+        mSel=null; mLeft--; setStreak(true); setScore(8); fb(true," +8"); srsMark(+b.dataset.k, true);
+        if(mLeft===0) setTimeout(()=>endScreen("All matched", mMiss+" misses. "+(mMiss===0?"Flawless.":mMiss<4?"Solid.":"Run it back for a clean round.")),600);
+      } else {
+        const a=mSel; a.classList.remove("sel"); a.classList.add("bad"); b.classList.add("bad");
+        mSel=null; mMiss++; setStreak(false); setScore(-2); fb(false," -2");
+        srsMark(+a.dataset.k, false); srsMark(+b.dataset.k, false);
+        setTimeout(()=>{a.classList.remove("bad"); b.classList.remove("bad");},500);
+      }
+    };
+    $("mGrid").appendChild(b);
+  });
+}
+
+let oDeck=[], oIdx=0, oMiss=0;
+function orderStart(){
+  resetScore();
+  show("order"); oMiss=0; oIdx=0; $("oPlaced").textContent="";
+  const set=setRules();
+  const n=lenOf(set);
+  let deck;
+  if(set.length<=n) deck=set.slice();
+  else { const start=Math.floor(Math.random()*(set.length-n+1)); deck=set.slice(start,start+n); }
+  oDeck=deck.slice().sort((a,b)=>a[0]-b[0]);
+  $("oInstr").textContent="Tap the rules in order, "+oDeck[0][0]+" through "+oDeck[oDeck.length-1][0]+".";
+  $("oPool").innerHTML="";
+  shuf(deck).forEach(r=>{
+    const b=document.createElement("button");
+    b.className="tile"; b.textContent=r[1];
+    b.onclick=()=>{
+      if(r[0]===oDeck[oIdx][0]){
+        b.classList.add("done");
+        $("oPlaced").textContent += (oIdx>0?"  ·  ":"") + r[0]+". "+r[1].split(" ").slice(0,3).join(" ");
+        oIdx++; setStreak(true); setScore(6); fb(true," +6"); srsMark(r[0], true);
+        if(oIdx>=oDeck.length) setTimeout(()=>endScreen("Perfect sequence", oMiss+" wrong taps. "+(oMiss===0?"You know the order cold.":"Getting there.")),600);
+      } else {
+        b.classList.add("bad"); oMiss++; setStreak(false); setScore(-2); srsMark(r[0], false);
+        fb(false," That's Rule "+r[0]+". You need Rule "+oDeck[oIdx][0]+".");
+        setTimeout(()=>b.classList.remove("bad"),500);
+      }
+    };
+    $("oPool").appendChild(b);
+  });
+}
+
+let cDeck=[], cIdx=0, cGot=0, cFlipped=false, cFirstCount=0;
+function cardsStart(subset){
+  resetScore();
+  show("cards");
+  let pool = subset&&subset.length ? subset : setRules();
+  const cn=lenOf(pool);
+  if(pool.length>cn) pool=shuf(pool).slice(0,cn);
+  cDeck = shuf(pool).map(r=>({r, askNum: Math.random()<0.5, retry:false}));
+  cIdx=0; cGot=0; cFirstCount=cDeck.length; cardsShow();
+}
+function cardsShow(){
+  if(cIdx>=cDeck.length){
+    endScreen("Deck complete", cGot+" of "+cFirstCount+" got on first look."+(cGot===cFirstCount?" Flawless.":""));
+    return;
+  }
+  const c=cDeck[cIdx]; cFlipped=false;
+  $("cFace").textContent = c.askNum ? "Rule "+c.r[0]+" is…?" : c.r[1];
+  $("cActions").style.visibility="hidden";
+  $("cProg").textContent = "Card "+(cIdx+1)+" of "+cDeck.length + (c.retry?" · retry":"");
+}
+function cardsFlip(){
+  if(cFlipped || mode!=="cards") return;
+  cFlipped=true;
+  $("cFace").textContent = "Rule "+cDeck[cIdx].r[0]+" — "+cDeck[cIdx].r[1];
+  $("cActions").style.visibility="visible";
+}
+$("cFace").addEventListener("click", cardsFlip);
+$("cGot").addEventListener("click", ()=>{
+  if(!cFlipped) return;
+  const c=cDeck[cIdx];
+  if(!c.retry){ cGot++; srsMark(c.r[0], true); setScore(4); setStreak(true); fb(true," +4"); }
+  else fb(true,"");
+  cIdx++; cardsShow();
+});
+$("cAgain").addEventListener("click", ()=>{
+  if(!cFlipped) return;
+  const c=cDeck[cIdx];
+  if(!c.retry) srsMark(c.r[0], false);
+  setStreak(false);
+  cDeck.push({r:c.r, askNum:!c.askNum, retry:true});
+  fb(false," It comes back at the end of the deck.");
+  cIdx++; cardsShow();
+});
+
+// Type mode: recall 10 rule titles from memory, graded close-to-exact at the end.
+const esc = s => s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+function lev(a,b){
+  const m=a.length, n=b.length;
+  if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,j)=>j), row=new Array(n+1);
+  for(let i=1;i<=m;i++){
+    row[0]=i;
+    for(let j=1;j<=n;j++)
+      row[j]=Math.min(prev[j]+1, row[j-1]+1, prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    [prev,row]=[row,prev];
+  }
+  return prev[n];
+}
+function typedOk(ans, target){
+  const a=norm(ans||""), t=norm(target);
+  if(!a) return false;
+  if(a===t) return true;
+  return lev(a,t) <= Math.max(2, Math.round(t.length*0.15));
+}
+let tDeck=[], tIdx=0, tAns=[];
+function typeStart(){
+  resetScore();
+  show("type");
+  const tSet=setRules();
+  tDeck=shuf(tSet).slice(0, lenOf(tSet)); tIdx=0; tAns=[];
+  $("tQuizBox").style.display="block";
+  $("tResults").style.display="none"; $("tResults").innerHTML="";
+  typeShow();
+}
+function typeShow(){
+  $("tPrompt").textContent="Rule "+tDeck[tIdx][0];
+  $("tInput").value=tAns[tIdx]||"";
+  $("tBack").disabled = tIdx===0;
+  $("tNext").textContent = tIdx===tDeck.length-1 ? "Finish" : "Next";
+  $("tProg").textContent = (tIdx+1)+" of "+tDeck.length;
+  $("tInput").focus();
+}
+function typeNext(){
+  tAns[tIdx]=$("tInput").value;
+  tIdx++;
+  if(tIdx<tDeck.length) typeShow(); else typeGrade();
+}
+function typeBack(){
+  if(tIdx===0) return;
+  tAns[tIdx]=$("tInput").value;
+  tIdx--;
+  typeShow();
+}
+function typeGrade(){
+  let right=0, rows="";
+  tDeck.forEach((r,i)=>{
+    const ok=typedOk(tAns[i], r[1]);
+    if(ok){ right++; setScore(15); }
+    setStreak(ok); srsMark(r[0], ok);
+    rows+='<div class="trow '+(ok?'ok':'no')+'"><div>'+(ok?'✓':'✗')+' Rule '+r[0]+' — '+esc(r[1])+'</div>'
+        + '<div class="tyours">you: '+(tAns[i]&&tAns[i].trim()?esc(tAns[i]):'—')+'</div></div>';
+  });
+  const due=dueRules(), nd=nextDue();
+  const dueLine = due.length
+    ? due.length+" rule"+(due.length>1?"s are":" is")+" due for review right now."
+    : (nd ? "Come back "+rel(nd-Date.now())+" to lock these in." : "");
+  $("tQuizBox").style.display="none";
+  $("tResults").innerHTML =
+    '<p class="tsummary">'+right+' of '+tDeck.length+' correct.'+(right===tDeck.length?' Word perfect.':'')+'</p>'
+    + '<p class="muted" style="text-align:center;margin:0 0 8px;">'+(right?'+'+(right*15)+' points. ':'')+'Total score: '+score+'</p>'
+    + rows
+    + '<p class="muted" style="text-align:center;margin:12px 0 0;">'+dueLine+'</p>'
+    + '<div style="text-align:center;margin-top:12px;"><button id="tAgainBtn">Play again</button></div>';
+  $("tResults").style.display="block";
+  $("tAgainBtn").addEventListener("click", typeStart);
+}
+$("tNext").addEventListener("click", typeNext);
+$("tBack").addEventListener("click", typeBack);
+$("tInput").addEventListener("keydown", e=>{ if(e.key==="Enter") typeNext(); });
+
+function endScreen(t,s){
+  show("end");
+  $("endTitle").textContent=t;
+  $("endSub").textContent=s+" Total score: "+score;
+  const due=dueRules(), nd=nextDue();
+  $("endNext").textContent = due.length
+    ? due.length+" rule"+(due.length>1?"s are":" is")+" due for review right now."
+    : (nd ? "Come back "+rel(nd-Date.now())+" to lock these in." : "");
+}
+const STARTERS={quiz:quizStart, match:matchStart, order:orderStart, cards:()=>cardsStart(), type:typeStart};
+let lastMode="quiz";
+$("replayBtn").addEventListener("click",()=>{ STARTERS[lastMode](); });
+document.querySelectorAll(".modebtn").forEach(b=>b.addEventListener("click",()=>{ lastMode=b.dataset.m; STARTERS[lastMode](); }));
+$("srsReviewBtn").addEventListener("click",()=>{ lastMode="cards"; cardsStart(dueRules()); });
+refreshSetUI();
+updateBanner();
+setInterval(updateBanner, 60e3);
+quizStart();
+</script>
+</body>
+</html>
