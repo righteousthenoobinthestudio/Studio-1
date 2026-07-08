@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&lt;righteous-logo&gt; — component demo</title>
+<style>
+  body { margin: 0; display: flex; flex-direction: column; min-height: 100vh;
+         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  .panel { flex: 1; display: flex; flex-direction: column; align-items: center;
+           justify-content: center; gap: 40px; padding: 40px 16px; }
+  .light { background: #FAFAF7; color: #141414; }
+  .dark { background: #141414; color: #FFFFFF; }
+  .caption { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.45; }
+  .row { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+</style>
+</head>
+<body>
+  <div class="panel light">
+    <div class="row">
+      <righteous-logo></righteous-logo>
+      <span class="caption">loop · 52px (default)</span>
+    </div>
+    <div class="row">
+      <righteous-logo size="16"></righteous-logo>
+      <span class="caption">header size · 16px</span>
+    </div>
+  </div>
+  <div class="panel dark">
+    <div class="row">
+      <righteous-logo mode="once"></righteous-logo>
+      <span class="caption">one-shot · rests at [r] studios</span>
+    </div>
+  </div>
+  <script src="righteous-logo.js"></script>
+</body>
+</html>

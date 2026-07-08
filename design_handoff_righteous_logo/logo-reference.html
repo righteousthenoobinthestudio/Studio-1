@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>[r] studios — logo reference</title>
+<style>
+  body { margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+  .panel { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .light { background: #FAFAF7; color: #141414; }
+  .dark { background: #141414; color: #FFFFFF; }
+  .logo {
+    display: flex; align-items: baseline; gap: 0.27em;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700;
+    font-size: 52px; letter-spacing: -0.02em; line-height: 1;
+  }
+  .logo .studios { font-size: 0.29em; letter-spacing: 0.5em; }
+</style>
+</head>
+<body>
+  <div class="panel light">
+    <div class="logo" aria-label="Righteous Studios">
+      <span aria-hidden="true">[<span class="txt">righteous</span><span class="close">]</span></span>
+      <span class="studios">studios</span>
+    </div>
+  </div>
+  <div class="panel dark">
+    <div class="logo" aria-label="Righteous Studios">
+      <span aria-hidden="true">[<span class="txt">righteous</span><span class="close">]</span></span>
+      <span class="studios">studios</span>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var FULL = 'righteous';
+  var HOLD_FULL = 2000, ERASE = 110, REST = 2600, RETYPE = 90, BLINK = 530;
+
+  var txts = document.querySelectorAll('.txt');
+  var closes = document.querySelectorAll('.close');
+  function setTxt(s) { txts.forEach(function (el) { el.textContent = s; }); }
+  function setBracket(on) { closes.forEach(function (el) { el.style.opacity = on ? '1' : '0'; }); }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setTxt('r'); // static lockup, no animation
+    return;
+  }
+
+  var holding = true, blinkOn = true;
+  setInterval(function () {
+    if (holding) { blinkOn = !blinkOn; setBracket(blinkOn); }
+  }, BLINK);
+
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  (async function loop() {
+    while (true) {
+      holding = true; blinkOn = true; setTxt(FULL); setBracket(true);
+      await wait(HOLD_FULL);
+      holding = false; setBracket(true);
+      for (var i = FULL.length - 1; i >= 1; i--) { setTxt(FULL.slice(0, i)); await wait(ERASE); }
+      holding = true; blinkOn = true;
+      await wait(REST);
+      holding = false; setBracket(true);
+      for (var j = 2; j <= FULL.length; j++) { setTxt(FULL.slice(0, j)); await wait(RETYPE); }
+    }
+  })();
+})();
+</script>
+</body>
+</html>

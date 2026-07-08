@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <style>
+    body { margin: 0; background: #EDEDE9; padding: 48px; }
+    a { color: inherit; }
+    a:hover { color: #141414; }
+  </style>
+</helmet>
+
+<section style="display:flex;flex-direction:column;gap:20px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin-bottom:56px">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-size:20px;font-weight:700;color:#141414">Round 3</span>
+    <span style="font-size:13px;color:#8A8A83">animated erase from <a href="#2b" style="font-weight:600">2b</a> — brackets backspace to [r] studios</span>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+    <!-- 3a animated erase -->
+    <div id="3a" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#3a" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">3a</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">The backspace</span>
+        <span style="font-size:12px;color:#9A9A93">bracket closes in like a horizontal cursor, rests at [r]</span>
+      </div>
+      <div style="height:220px;display:flex;align-items:center;justify-content:center;background:#FAFAF7">
+        <div style="display:flex;align-items:baseline;gap:14px;color:var(--ink,#141414)">
+          <div style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1"><span>[</span><span>{{ typedTxt }}</span><span style="opacity: {{ bracketOpacity }}">]</span></div>
+          <div style="font-size:15px;font-weight:700;letter-spacing:0.5em">studios</div>
+        </div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="display:flex;align-items:baseline;gap:10px;color:#FFFFFF">
+          <div style="font-size:32px;font-weight:700;letter-spacing:-0.02em;line-height:1">[r]</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.5em">studios</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;letter-spacing:-0.02em">[r]</div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-0.02em">[r]</div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700">[r]</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="display:flex;align-items:baseline;gap:7px;color:var(--ink,#141414)"><span style="font-size:15px;font-weight:700;letter-spacing:-0.02em">[r]</span><span style="font-size:9px;font-weight:700;letter-spacing:0.3em">studios</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:20px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;margin-bottom:56px">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-size:20px;font-weight:700;color:#141414">Round 2</span>
+    <span style="font-size:13px;color:#8A8A83">pushing <a href="#1a" style="font-weight:600">1a</a> — bracket refinements</span>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+    <!-- 2a tighter one-liner -->
+    <div id="2a" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#2a" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">2a</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">One line, heavier</span>
+        <span style="font-size:12px;color:#9A9A93">tighter tracking, weight 800</span>
+      </div>
+      <div style="height:220px;display:flex;align-items:center;justify-content:center;background:#FAFAF7">
+        <div style="font-size:44px;font-weight:800;letter-spacing:-0.04em;line-height:1;color:var(--ink,#141414)">[righteous studios]</div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-0.04em;line-height:1;color:#FFFFFF">[righteous studios]</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;letter-spacing:-0.04em">[r]</div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;letter-spacing:-0.04em">[r]</div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800">[r]</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="font-size:15px;font-weight:800;letter-spacing:-0.04em;color:var(--ink,#141414)">[righteous studios]</div>
+      </div>
+    </div>
+
+    <!-- 2b studios outside -->
+    <div id="2b" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#2b" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">2b</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">Studios steps outside</span>
+        <span style="font-size:12px;color:#9A9A93">brackets hold only the name</span>
+      </div>
+      <div style="height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#FAFAF7">
+        <div style="font-size:56px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:var(--ink,#141414)">[righteous]</div>
+        <div style="font-size:14px;font-weight:700;letter-spacing:0.5em;margin-left:0.5em;color:var(--ink,#141414)">studios</div>
+      </div>
+      <div style="height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;background:#141414">
+        <div style="font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:#FFFFFF">[righteous]</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.5em;margin-left:0.5em;color:#FFFFFF">studios</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;letter-spacing:-0.02em">[r]</div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-0.02em">[r]</div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700">[r]</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="display:flex;align-items:baseline;gap:8px;color:var(--ink,#141414)"><span style="font-size:15px;font-weight:700;letter-spacing:-0.02em">[righteous]</span><span style="font-size:9px;font-weight:700;letter-spacing:0.3em">studios</span></div>
+      </div>
+    </div>
+
+    <!-- 2c drawn brackets, stacked -->
+    <div id="2c" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#2c" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">2c</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">Drawn brackets</span>
+        <span style="font-size:12px;color:#9A9A93">stacked lockup, geometric brackets</span>
+      </div>
+      <div style="height:220px;display:flex;align-items:center;justify-content:center;background:#FAFAF7">
+        <div style="display:flex;align-items:stretch;gap:18px;color:var(--ink,#141414)">
+          <div style="width:15px;border-left:6px solid currentColor;border-top:6px solid currentColor;border-bottom:6px solid currentColor"></div>
+          <div style="font-size:36px;font-weight:700;letter-spacing:-0.02em;line-height:1.15;padding:6px 0">righteous<br>studios</div>
+          <div style="width:15px;border-right:6px solid currentColor;border-top:6px solid currentColor;border-bottom:6px solid currentColor"></div>
+        </div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="display:flex;align-items:stretch;gap:10px;color:#FFFFFF">
+          <div style="width:8px;border-left:4px solid currentColor;border-top:4px solid currentColor;border-bottom:4px solid currentColor"></div>
+          <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;line-height:1.15;padding:3px 0">righteous<br>studios</div>
+          <div style="width:8px;border-right:4px solid currentColor;border-top:4px solid currentColor;border-bottom:4px solid currentColor"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center">
+            <div style="display:flex;align-items:stretch;gap:4px">
+              <div style="width:4px;border-left:2.5px solid currentColor;border-top:2.5px solid currentColor;border-bottom:2.5px solid currentColor"></div>
+              <div style="font-size:18px;font-weight:700;line-height:1;padding:2px 0">r</div>
+              <div style="width:4px;border-right:2.5px solid currentColor;border-top:2.5px solid currentColor;border-bottom:2.5px solid currentColor"></div>
+            </div>
+          </div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center">
+            <div style="display:flex;align-items:stretch;gap:3px">
+              <div style="width:3px;border-left:2px solid currentColor;border-top:2px solid currentColor;border-bottom:2px solid currentColor"></div>
+              <div style="font-size:12px;font-weight:700;line-height:1;padding:1px 0">r</div>
+              <div style="width:3px;border-right:2px solid currentColor;border-top:2px solid currentColor;border-bottom:2px solid currentColor"></div>
+            </div>
+          </div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700">[r]</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="display:flex;align-items:stretch;gap:5px;color:var(--ink,#141414)">
+          <div style="width:4px;border-left:2px solid currentColor;border-top:2px solid currentColor;border-bottom:2px solid currentColor"></div>
+          <div style="font-size:14px;font-weight:700;letter-spacing:-0.02em;line-height:1;padding:2px 0">righteous studios</div>
+          <div style="width:4px;border-right:2px solid currentColor;border-top:2px solid currentColor;border-bottom:2px solid currentColor"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2d cursor -->
+    <div id="2d" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#2d" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">2d</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">The cursor</span>
+        <span style="font-size:12px;color:#9A9A93">softly software — trailing underscore</span>
+      </div>
+      <div style="height:220px;display:flex;align-items:center;justify-content:center;background:#FAFAF7">
+        <div style="font-size:40px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:var(--ink,#141414)">[righteous studios_]</div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:#FFFFFF">[righteous studios_]</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;letter-spacing:-0.04em">[r_]</div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:-0.04em">[r_]</div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:700">[r_]</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="font-size:15px;font-weight:700;letter-spacing:-0.02em;color:var(--ink,#141414)">[righteous studios_]</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:20px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span style="font-size:20px;font-weight:700;color:#141414">Round 1</span>
+    <span style="font-size:13px;color:#8A8A83">Righteous Studios — four directions · light / dark / scale test (48 · 32 · 16 · header, actual size)</span>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+    <!-- 1a bracket wordmark -->
+    <div id="1a" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#1a" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">1a</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">Brackets</span>
+        <span style="font-size:12px;color:#9A9A93">deadpan wordmark, all Helvetica</span>
+      </div>
+      <div style="height:220px;display:flex;align-items:center;justify-content:center;background:#FAFAF7">
+        <div style="font-size:42px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:var(--ink,#141414)">[righteous studios]</div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="font-size:24px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:#FFFFFF">[righteous studios]</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;letter-spacing:-0.02em">[r]</div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-0.02em">[r]</div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700">[r]</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="font-size:15px;font-weight:700;letter-spacing:-0.02em;color:var(--ink,#141414)">[righteous studios]</div>
+      </div>
+    </div>
+
+    <!-- 1b halo -->
+    <div id="1b" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#1b" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">1b</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">The halo</span>
+        <span style="font-size:12px;color:#9A9A93">“righteous”, taken literally — one wink</span>
+      </div>
+      <div style="height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#FAFAF7">
+        <div style="font-size:58px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:var(--ink,#141414)">r<span style="position:relative;display:inline-block">ı<span style="position:absolute;left:54%;top:-0.09em;width:0.55em;height:0.22em;border:0.065em solid currentColor;border-radius:50%;transform:translateX(-50%) rotate(-12deg)"></span></span>ghteous</div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.42em;margin-left:0.42em;color:var(--ink,#141414)">STUDIOS</div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="font-size:32px;font-weight:700;letter-spacing:-0.02em;line-height:1;color:#FFFFFF">r<span style="position:relative;display:inline-block">ı<span style="position:absolute;left:54%;top:-0.09em;width:0.55em;height:0.22em;border:0.065em solid currentColor;border-radius:50%;transform:translateX(-50%) rotate(-12deg)"></span></span>ghteous</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700"><span style="position:relative;display:inline-block;line-height:1">ı<span style="position:absolute;left:54%;top:-0.09em;width:0.55em;height:0.22em;border:0.065em solid currentColor;border-radius:50%;transform:translateX(-50%) rotate(-12deg)"></span></span></div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700"><span style="position:relative;display:inline-block;line-height:1">ı<span style="position:absolute;left:54%;top:-0.09em;width:0.55em;height:0.22em;border:0.065em solid currentColor;border-radius:50%;transform:translateX(-50%) rotate(-12deg)"></span></span></div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700"><span style="position:relative;display:inline-block;line-height:1">ı<span style="position:absolute;left:54%;top:-0.09em;width:0.55em;height:0.22em;border:0.065em solid currentColor;border-radius:50%;transform:translateX(-50%) rotate(-12deg)"></span></span></div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="font-size:15px;font-weight:700;letter-spacing:-0.02em;color:var(--ink,#141414)">r<span style="position:relative;display:inline-block">ı<span style="position:absolute;left:54%;top:-0.09em;width:0.55em;height:0.22em;border:0.065em solid currentColor;border-radius:50%;transform:translateX(-50%) rotate(-12deg)"></span></span>ghteous studios</div>
+      </div>
+    </div>
+
+    <!-- 1c stacked plate -->
+    <div id="1c" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#1c" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">1c</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">Stacked plate</span>
+        <span style="font-size:12px;color:#9A9A93">brutalist block, holds at any size</span>
+      </div>
+      <div style="height:220px;display:flex;align-items:center;justify-content:center;background:#FAFAF7">
+        <div style="width:220px;color:var(--ink,#141414);font-weight:800;font-size:52px;line-height:0.95">
+          <div style="display:flex;justify-content:space-between"><span>R</span><span>I</span><span>G</span><span>H</span><span>T</span></div>
+          <div style="display:flex;justify-content:space-between"><span>E</span><span>O</span><span>U</span><span>S</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-top:10px;padding-top:8px;border-top:3px solid currentColor"><span>S</span><span>T</span><span>U</span><span>D</span><span>I</span><span>O</span><span>S</span></div>
+        </div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="width:110px;color:#FFFFFF;font-weight:800;font-size:26px;line-height:0.95">
+          <div style="display:flex;justify-content:space-between"><span>R</span><span>I</span><span>G</span><span>H</span><span>T</span></div>
+          <div style="display:flex;justify-content:space-between"><span>E</span><span>O</span><span>U</span><span>S</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:800;line-height:0.9"><span>R</span><span>S</span></div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:0.9"><span>R</span><span>S</span></div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">R</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="font-size:13px;font-weight:800;letter-spacing:0.06em;color:var(--ink,#141414)">RIGHTEOUS STUDIOS</div>
+      </div>
+    </div>
+
+    <!-- 1d channel bug -->
+    <div id="1d" style="width:560px;background:#FFFFFF;border:1px solid #E3E3DE;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EEEEE9">
+        <a href="#1d" style="font-family:ui-monospace,monospace;font-size:12px;font-weight:600;background:#141414;color:#FFFFFF;padding:2px 8px;border-radius:4px;text-decoration:none">1d</a>
+        <span style="font-size:13px;font-weight:600;color:#141414">Channel bug</span>
+        <span style="font-size:12px;color:#9A9A93">outlined badge, on-air sticker energy</span>
+      </div>
+      <div style="height:220px;display:flex;align-items:center;justify-content:center;background:#FAFAF7">
+        <div style="border:4px solid var(--ink,#141414);border-radius:22px;padding:20px 32px;color:var(--ink,#141414);font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1.08;text-align:center">righteous<br>studios</div>
+      </div>
+      <div style="height:110px;display:flex;align-items:center;justify-content:center;background:#141414">
+        <div style="border:3px solid #FFFFFF;border-radius:14px;padding:10px 18px;color:#FFFFFF;font-size:17px;font-weight:700;letter-spacing:-0.02em;line-height:1.08;text-align:center">righteous<br>studios</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;padding:16px 18px;border-top:1px solid #EEEEE9">
+        <div style="display:flex;align-items:flex-end;gap:10px">
+          <div style="width:48px;height:48px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;letter-spacing:-0.02em">rs</div>
+          <div style="width:32px;height:32px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-0.02em">rs</div>
+          <div style="width:16px;height:16px;border-radius:var(--icon-r,26%);background:var(--ink,#141414);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700">rs</div>
+        </div>
+        <div style="width:1px;height:36px;background:#E3E3DE"></div>
+        <div style="border:2px solid var(--ink,#141414);border-radius:8px;padding:3px 9px;color:var(--ink,#141414);font-size:12px;font-weight:700;letter-spacing:-0.01em">righteous studios</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ink&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#141414&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#141414&quot;, &quot;#2438C9&quot;, &quot;#1F6B45&quot;, &quot;#B3341E&quot;], &quot;section&quot;: &quot;Mark&quot;}, &quot;iconShape&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;rounded&quot;, &quot;options&quot;: [&quot;rounded&quot;, &quot;square&quot;, &quot;circle&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;App icon&quot;}}">
+class Component extends DCLogic {
+  state = { txt: 'righteous', blink: true };
+  componentDidMount() { this.applyVars(); }
+  componentDidUpdate() { this.applyVars(); }
+  applyVars() {
+    const ink = this.props.ink ?? '#141414';
+    const shape = this.props.iconShape ?? 'rounded';
+    const r = shape === 'circle' ? '50%' : shape === 'square' ? '8%' : '26%';
+    document.documentElement.style.setProperty('--ink', ink);
+    document.documentElement.style.setProperty('--icon-r', r);
+  }
+  ensureAnim() {
+    if (this._started) return;
+    this._started = true;
+    this._alive = true;
+    this._holding = true;
+    this._blinkTimer = setInterval(() => {
+      if (this._holding) this.setState(s => ({ blink: !s.blink }));
+    }, 530);
+    setTimeout(() => this.runLoop(), 0);
+  }
+  componentWillUnmount() {
+    this._alive = false;
+    clearTimeout(this._stepTimer);
+    clearInterval(this._blinkTimer);
+  }
+  wait(ms) { return new Promise(r => { this._stepTimer = setTimeout(r, ms); }); }
+  async runLoop() {
+    const full = 'righteous';
+    while (this._alive) {
+      this._holding = true;
+      this.setState({ txt: full, blink: true });
+      await this.wait(2000);
+      this._holding = false;
+      this.setState({ blink: true });
+      for (let i = full.length - 1; i >= 1 && this._alive; i--) {
+        this.setState({ txt: full.slice(0, i) });
+        await this.wait(110);
+      }
+      this._holding = true;
+      await this.wait(2600);
+      this._holding = false;
+      this.setState({ blink: true });
+      for (let i = 2; i <= full.length && this._alive; i++) {
+        this.setState({ txt: full.slice(0, i) });
+        await this.wait(90);
+      }
+    }
+  }
+  renderVals() {
+    this.ensureAnim();
+    const s = this.state || {};
+    return {
+      typedTxt: s.txt ?? 'righteous',
+      bracketOpacity: (s.blink ?? true) ? 1 : 0
+    };
+  }
+}
+</script>
+</body>
+</html>

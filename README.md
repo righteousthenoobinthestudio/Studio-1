@@ -22,3 +22,21 @@ browser — it works offline.
   with a "due for review" banner and return-time prompts
 - Per-round scoring with streak bonuses
 - Light and dark mode
+
+# Righteous Studios logo
+
+`components/righteous-logo.js` implements the animated **[r] studios** wordmark
+("The Backspace") as a dependency-free web component, per the spec in
+`design_handoff_righteous_logo/README.md`.
+
+```html
+<script src="components/righteous-logo.js"></script>
+
+<righteous-logo></righteous-logo>                 <!-- loop forever, 52px -->
+<righteous-logo size="24"></righteous-logo>       <!-- bracket mark size in px (min 15) -->
+<righteous-logo mode="once"></righteous-logo>     <!-- backspace once, rest at [r] studios -->
+```
+
+The mark inherits `currentColor` — set `color: #141414` on light backgrounds or
+`#FFFFFF` on dark. Respects `prefers-reduced-motion` (renders the static
+lockup). See `components/righteous-logo-demo.html` for a live demo.
