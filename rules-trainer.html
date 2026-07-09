@@ -23,7 +23,7 @@
   }
 }
 *{box-sizing:border-box;}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);max-width:720px;margin:0 auto;padding:24px 16px;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);max-width:720px;margin:0 auto;padding:24px 16px 64px;}
 .masthead{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;padding:0 0 16px;border-bottom:4px double var(--gold-border);margin:0 0 16px;}
 .masthead h1{font-family:var(--serif);font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;margin:0;text-wrap:balance;}
 .masthead p{margin:3px 0 0;}
@@ -85,6 +85,8 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 .cardactions{display:flex;gap:8px;justify-content:center;margin-top:12px;}
 .cardactions .good{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);}
 .cardactions .bad{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}
+.powered{position:fixed;right:16px;bottom:12px;display:flex;align-items:baseline;gap:8px;color:var(--muted);z-index:5;pointer-events:none;}
+.powered .plabel{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
 </style>
 </head>
 <body>
@@ -178,6 +180,97 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
   <span class="chip">🏆 <span id="score">0</span></span>
   <span class="chip">🔥 <span id="streak">0</span></span>
 </div>
+
+<div class="powered" title="Righteous Studios">
+  <span class="plabel">Powered by</span>
+  <righteous-logo size="18"></righteous-logo>
+</div>
+
+<script>
+/* <righteous-logo> — Righteous Studios animated wordmark ("The Backspace").
+   Inlined from Studio-1/components/righteous-logo.js to keep this file standalone. */
+(function () {
+  'use strict';
+  var FULL = 'righteous';
+  var HOLD_FULL = 2000, ERASE = 110, REST = 2600, RETYPE = 90, BLINK = 530;
+  var CSS =
+    ':host{display:inline-block;color:inherit;}' +
+    '.logo{display:flex;align-items:baseline;gap:0.27em;' +
+    "font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;" +
+    'font-weight:700;letter-spacing:-0.02em;line-height:1;}' +
+    '.studios{font-size:0.29em;letter-spacing:0.5em;}';
+  class RighteousLogo extends HTMLElement {
+    connectedCallback() {
+      if (!this.shadowRoot) {
+        var root = this.attachShadow({ mode: 'open' });
+        root.innerHTML =
+          '<style>' + CSS + '</style>' +
+          '<span class="logo" role="img" aria-label="Righteous Studios">' +
+          '<span aria-hidden="true">[<span class="txt">righteous</span><span class="close">]</span></span>' +
+          '<span class="studios" aria-hidden="true">studios</span>' +
+          '</span>';
+      }
+      this._txt = this.shadowRoot.querySelector('.txt');
+      this._close = this.shadowRoot.querySelector('.close');
+      var size = parseFloat(this.getAttribute('size'));
+      this.shadowRoot.querySelector('.logo').style.fontSize = (size > 0 ? size : 52) + 'px';
+      this._rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+      this._rmHandler = this._restart.bind(this);
+      this._rm.addEventListener('change', this._rmHandler);
+      this._start();
+    }
+    disconnectedCallback() {
+      this._stop();
+      this._rm.removeEventListener('change', this._rmHandler);
+    }
+    _start() {
+      this._alive = true;
+      if (this._rm.matches) { this._setTxt('r'); this._setBracket(true); return; }
+      this._holding = false;
+      this._blinkOn = true;
+      var self = this;
+      this._blinkTimer = setInterval(function () {
+        if (self._holding) { self._blinkOn = !self._blinkOn; self._setBracket(self._blinkOn); }
+      }, BLINK);
+      this._run();
+    }
+    _stop() {
+      this._alive = false;
+      clearInterval(this._blinkTimer);
+      clearTimeout(this._waitTimer);
+    }
+    _restart() { this._stop(); this._start(); }
+    _setTxt(s) { this._txt.textContent = s; }
+    _setBracket(on) { this._close.style.opacity = on ? '1' : '0'; }
+    _wait(ms) {
+      var self = this;
+      return new Promise(function (res) { self._waitTimer = setTimeout(res, ms); });
+    }
+    async _run() {
+      var once = this.getAttribute('mode') === 'once';
+      while (this._alive) {
+        this._holding = true; this._blinkOn = true;
+        this._setTxt(FULL); this._setBracket(true);
+        await this._wait(HOLD_FULL); if (!this._alive) return;
+        this._holding = false; this._setBracket(true);
+        for (var i = FULL.length - 1; i >= 1; i--) {
+          this._setTxt(FULL.slice(0, i));
+          await this._wait(ERASE); if (!this._alive) return;
+        }
+        this._holding = true; this._blinkOn = true;
+        if (once) return;
+        await this._wait(REST); if (!this._alive) return;
+        this._holding = false; this._setBracket(true);
+        for (var j = 2; j <= FULL.length; j++) {
+          this._setTxt(FULL.slice(0, j));
+          await this._wait(RETYPE); if (!this._alive) return;
+        }
+      }
+    }
+  }
+  customElements.define('righteous-logo', RighteousLogo);
+})();
+</script>
 
 <script>
 const RULES = [
