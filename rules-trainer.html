@@ -100,13 +100,54 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 .cardactions{display:flex;gap:8px;justify-content:center;margin-top:12px;}
 .cardactions .good{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);}
 .cardactions .bad{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}
+.splash{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:#FAFAF7;color:#141414;opacity:1;transition:opacity .6s;}
+@media (prefers-color-scheme: dark){ .splash{background:#141414;color:#FFFFFF;} }
+:root[data-theme="dark"] .splash{background:#141414;color:#FFFFFF;}
+:root[data-theme="light"] .splash{background:#FAFAF7;color:#141414;}
+.splash.fade{opacity:0;pointer-events:none;}
+.splash[hidden]{display:none;}
 .themebtn{position:fixed;top:14px;right:16px;z-index:6;padding:6px 10px;font-size:15px;line-height:1;background:var(--card);}
+.helpbtn{position:fixed;top:14px;right:62px;z-index:6;padding:6px 12px;font-size:14px;line-height:1;background:var(--card);font-family:var(--serif);font-weight:600;}
+.welcome{position:fixed;inset:0;z-index:20;background:rgba(15,20,17,0.55);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;}
+.welcome[hidden]{display:none;}
+.welcome-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 26px 24px;max-width:430px;width:100%;text-align:center;}
+.welcome-card h2{font-family:var(--serif);font-size:22px;font-weight:600;margin:10px 0 4px;}
+.wgames{list-style:none;margin:18px 0;padding:0;text-align:left;font-size:14px;display:flex;flex-direction:column;gap:9px;}
+.wgames b{font-family:var(--serif);}
+.wnote{font-size:13px;color:var(--muted);margin:0 0 18px;}
+.wstart{background:var(--green);color:var(--on-green);border-color:var(--green);padding:10px 24px;}
 .powered{position:fixed;right:16px;bottom:12px;display:flex;align-items:baseline;gap:8px;color:var(--muted);z-index:5;pointer-events:none;}
 .powered .plabel{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
 </style>
 </head>
 <body>
+<div id="splash" class="splash" aria-label="Righteous Studios">
+  <righteous-logo size="52" mode="once"></righteous-logo>
+</div>
+
 <button id="themeBtn" class="themebtn" aria-label="Toggle day and night mode">🌙</button>
+<button id="helpBtn" class="helpbtn" aria-label="How to play">?</button>
+
+<div id="welcome" class="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
+  <div class="welcome-card">
+    <svg class="seal" width="34" height="34" viewBox="0 0 44 44" aria-hidden="true">
+      <circle cx="22" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="22" cy="22" r="15" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2.6 2.6"/>
+      <text x="22" y="28.5" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="currentColor">§</text>
+    </svg>
+    <h2 id="welcomeTitle">Welcome to Briefed</h2>
+    <p class="muted" style="margin:0;">Five ways to memorise your Rules of Professional Conduct.</p>
+    <ul class="wgames">
+      <li><b>Quiz</b> — Multiple Choice, Either The Rules Or The Number.</li>
+      <li><b>Match</b> — Pair Rule Numbers With Their Titles.</li>
+      <li><b>Order</b> — Tap The Rules In Numerical Sequence.</li>
+      <li><b>Cards</b> — Flashcards; Grade Yourself Honestly.</li>
+      <li><b>Type</b> — The Hardest: Write Each Title From Memory.</li>
+    </ul>
+    <p class="wnote">Pick your section and round length in the <b>Studying</b> ribbon. Rules you miss quietly come back for review.</p>
+    <button id="welcomeStart" class="wstart">Start studying</button>
+  </div>
+</div>
 
 <header class="masthead">
   <svg class="seal" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
@@ -412,6 +453,36 @@ $("themeBtn").addEventListener("click",()=>{
 });
 darkQuery.addEventListener("change", updateThemeBtn);
 updateThemeBtn();
+
+// Onboarding: full-page studio splash first, then a one-time welcome card (reopenable via ?).
+const SEEN_KEY="rulesTrainerSeen";
+let welcomeSeen=false;
+try{ welcomeSeen = localStorage.getItem(SEEN_KEY)==="1"; }catch(e){}
+function showWelcome(){ $("welcome").hidden=false; $("welcomeStart").focus(); }
+function hideWelcome(){
+  $("welcome").hidden=true;
+  try{ localStorage.setItem(SEEN_KEY,"1"); }catch(e){}
+}
+let splashDone=false, splashTimer=null;
+function dismissSplash(){
+  if(splashDone) return;
+  splashDone=true;
+  clearTimeout(splashTimer);
+  $("splash").classList.add("fade");
+  setTimeout(()=>{ $("splash").hidden=true; if(!welcomeSeen) showWelcome(); }, 650);
+}
+// one-shot timeline: 2000ms hold + 8×110ms erase, then a beat at rest before fading
+const splashMs = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1200 : 2000 + 8*110 + 1100;
+splashTimer=setTimeout(dismissSplash, splashMs);
+$("splash").addEventListener("click", dismissSplash);
+$("welcomeStart").addEventListener("click", hideWelcome);
+$("helpBtn").addEventListener("click", showWelcome);
+$("welcome").addEventListener("click", e=>{ if(e.target===$("welcome")) hideWelcome(); });
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Escape") return;
+  if(!splashDone) dismissSplash();
+  else if(!$("welcome").hidden) hideWelcome();
+});
 
 const SET_KEY="rulesTrainerSet";
 let curSetId="s1";
