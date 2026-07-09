@@ -79,7 +79,9 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
   .tile:hover,.opt:not(:disabled):hover{transform:translateY(-1px);}
 }
 .bar{display:flex;gap:8px;align-items:center;justify-content:center;margin:1rem 0;flex-wrap:wrap;}
-.statsbar{display:flex;justify-content:center;gap:8px;margin:14px 0 0;font-size:14px;}
+.statsbar{display:flex;justify-content:center;align-items:center;gap:8px;margin:14px 0 0;font-size:14px;position:relative;}
+.restart{padding:4px 14px;font-size:14px;position:absolute;right:0;top:50%;transform:translateY(-50%);}
+@media (max-width:480px){ .restart{position:static;transform:none;} }
 .chip{background:var(--gold-bg);color:var(--gold-text);border:1px solid var(--gold-border);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums;}
 .cardbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
@@ -107,7 +109,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 .splash.fade{opacity:0;pointer-events:none;}
 .splash[hidden]{display:none;}
 .themebtn{position:fixed;top:14px;right:16px;z-index:6;padding:6px 10px;font-size:15px;line-height:1;background:var(--card);}
-.helpbtn{position:fixed;top:14px;right:62px;z-index:6;padding:6px 12px;font-size:14px;line-height:1;background:var(--card);font-family:var(--serif);font-weight:600;}
+.helpbtn{position:fixed;top:14px;left:16px;z-index:6;padding:6px 12px;font-size:14px;line-height:1;background:var(--card);font-family:var(--serif);font-weight:600;}
 .welcome{position:fixed;inset:0;z-index:20;background:rgba(15,20,17,0.55);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;}
 .welcome[hidden]{display:none;}
 .welcome-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 26px 24px;max-width:430px;width:100%;text-align:center;}
@@ -131,9 +133,14 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 <div id="welcome" class="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" hidden>
   <div class="welcome-card">
     <svg class="seal" width="34" height="34" viewBox="0 0 44 44" aria-hidden="true">
-      <circle cx="22" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
-      <circle cx="22" cy="22" r="15" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2.6 2.6"/>
-      <text x="22" y="28.5" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="currentColor">§</text>
+      <clipPath id="badgeB"><rect x="3" y="3" width="38" height="38" rx="5.5"/></clipPath>
+      <rect x="2" y="2" width="40" height="40" rx="7" fill="none" stroke="currentColor" stroke-width="2"/>
+      <g fill="currentColor" clip-path="url(#badgeB)">
+        <circle cx="22" cy="13.5" r="8"/>
+        <path d="M4.5 42 C4.5 31.5 12 26.8 15.5 25.4 L22 32.6 L28.5 25.4 C32 26.8 39.5 31.5 39.5 42 Z"/>
+        <path d="M22 30.6 L19.8 28 L22 25.4 L24.2 28 Z"/>
+        <path d="M21.9 31.2 L20.6 35 L22 36.9 L23.4 35 L22.1 31.2 Z"/>
+      </g>
     </svg>
     <h2 id="welcomeTitle">Welcome to Briefed</h2>
     <p class="muted" style="margin:0;">Five ways to memorise your Rules of Professional Conduct.</p>
@@ -151,9 +158,14 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 
 <header class="masthead">
   <svg class="seal" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
-    <circle cx="22" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
-    <circle cx="22" cy="22" r="15" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2.6 2.6"/>
-    <text x="22" y="28.5" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="currentColor">§</text>
+    <clipPath id="badgeA"><rect x="3" y="3" width="38" height="38" rx="5.5"/></clipPath>
+    <rect x="2" y="2" width="40" height="40" rx="7" fill="none" stroke="currentColor" stroke-width="2"/>
+    <g fill="currentColor" clip-path="url(#badgeA)">
+      <circle cx="22" cy="13.5" r="8"/>
+      <path d="M4.5 42 C4.5 31.5 12 26.8 15.5 25.4 L22 32.6 L28.5 25.4 C32 26.8 39.5 31.5 39.5 42 Z"/>
+      <path d="M22 30.6 L19.8 28 L22 25.4 L24.2 28 Z"/>
+      <path d="M21.9 31.2 L20.6 35 L22 36.9 L23.4 35 L22.1 31.2 Z"/>
+    </g>
   </svg>
   <div>
     <h1>Briefed</h1>
@@ -238,6 +250,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 <div class="statsbar">
   <span class="chip">🏆 <span id="score">0</span></span>
   <span class="chip">🔥 <span id="streak">0</span></span>
+  <button id="restartBtn" class="restart" title="Restart this round">↻ Restart</button>
 </div>
 
 <div class="powered" title="Righteous Studios">
@@ -804,6 +817,7 @@ function endScreen(t,s){
 const STARTERS={quiz:quizStart, match:matchStart, order:orderStart, cards:()=>cardsStart(), type:typeStart};
 let lastMode="quiz";
 $("replayBtn").addEventListener("click",()=>{ STARTERS[lastMode](); });
+$("restartBtn").addEventListener("click",()=>{ STARTERS[lastMode](); });
 document.querySelectorAll(".modebtn").forEach(b=>b.addEventListener("click",()=>{ lastMode=b.dataset.m; STARTERS[lastMode](); }));
 refreshSetUI();
 quizStart();
