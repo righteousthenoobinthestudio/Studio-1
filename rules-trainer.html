@@ -22,6 +22,21 @@
     --bad-bg:#4a2220; --bad-text:#f0c5bf; --bad-border:#c97b6f;
   }
 }
+/* manual theme override — must mirror the token sets above */
+:root[data-theme="dark"]{
+  --bg:#141a16; --card:#1e2620; --border:#3a453d; --text:#e8ebe2; --muted:#9caa9e;
+  --green:#2f7052; --on-green:#eafff2;
+  --good-bg:#1d4632; --good-text:#bfe3cd; --good-border:#5da581;
+  --gold:#d9b35f; --gold-bg:#3b2f12; --gold-text:#e7cf8c; --gold-border:#a3852f;
+  --bad-bg:#4a2220; --bad-text:#f0c5bf; --bad-border:#c97b6f;
+}
+:root[data-theme="light"]{
+  --bg:#edefe6; --card:#fcfcf8; --border:#ccd3c8; --text:#1d2a22; --muted:#5f6b63;
+  --green:#1e5c45; --on-green:#f4f3e7;
+  --good-bg:#ddeee2; --good-text:#14503a; --good-border:#4b8f6c;
+  --gold:#a5791d; --gold-bg:#f6eccd; --gold-text:#6b4e0e; --gold-border:#c19a3f;
+  --bad-bg:#f8e6e2; --bad-text:#702731; --bad-border:#c2635a;
+}
 *{box-sizing:border-box;}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);max-width:720px;margin:0 auto;padding:24px 16px 64px;}
 .masthead{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;padding:0 0 16px;border-bottom:4px double var(--gold-border);margin:0 0 16px;}
@@ -85,11 +100,14 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 .cardactions{display:flex;gap:8px;justify-content:center;margin-top:12px;}
 .cardactions .good{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);}
 .cardactions .bad{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}
+.themebtn{position:fixed;top:14px;right:16px;z-index:6;padding:6px 10px;font-size:15px;line-height:1;background:var(--card);}
 .powered{position:fixed;right:16px;bottom:12px;display:flex;align-items:baseline;gap:8px;color:var(--muted);z-index:5;pointer-events:none;}
 .powered .plabel{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
 </style>
 </head>
 <body>
+<button id="themeBtn" class="themebtn" aria-label="Toggle day and night mode">🌙</button>
+
 <header class="masthead">
   <svg class="seal" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
     <circle cx="22" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -369,6 +387,31 @@ const shuf = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floo
 let score=0, streak=0, mode=null;
 const PRAISE = ["Nice.","Sharp.","Locked in.","Counsel is on fire.","Objection overruled. Correct.","The bar approves.","Clean hit.","Textbook."];
 const MISS = ["Not that one.","Close, but no.","The examiner frowns.","Strike that from the record.","Try again."];
+
+// Day/night toggle: explicit choice overrides the OS preference and persists.
+const THEME_KEY="rulesTrainerTheme";
+const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+function effectiveTheme(){
+  const t=document.documentElement.getAttribute("data-theme");
+  return t || (darkQuery.matches ? "dark" : "light");
+}
+function updateThemeBtn(){
+  const dark = effectiveTheme()==="dark";
+  $("themeBtn").textContent = dark ? "☀️" : "🌙";
+  $("themeBtn").setAttribute("aria-label", dark ? "Switch to day mode" : "Switch to night mode");
+}
+try{
+  const saved=localStorage.getItem(THEME_KEY);
+  if(saved==="dark"||saved==="light") document.documentElement.setAttribute("data-theme",saved);
+}catch(e){}
+$("themeBtn").addEventListener("click",()=>{
+  const next = effectiveTheme()==="dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme",next);
+  try{ localStorage.setItem(THEME_KEY,next); }catch(e){}
+  updateThemeBtn();
+});
+darkQuery.addEventListener("change", updateThemeBtn);
+updateThemeBtn();
 
 const SET_KEY="rulesTrainerSet";
 let curSetId="s1";
