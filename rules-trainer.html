@@ -65,6 +65,8 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 .ribbon-len{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .lenbtns{display:flex;gap:6px;}
 .lenbtn.active{background:var(--green);color:var(--on-green);border-color:var(--green);}
+.modebtn{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:9px 16px;}
+.modebtn svg{flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
 .modebtn.active{background:var(--green);color:var(--on-green);border-color:var(--green);}
 .opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 16px;border-radius:12px;}
 .opt.correct{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);}
@@ -102,10 +104,10 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 .cardactions{display:flex;gap:8px;justify-content:center;margin-top:12px;}
 .cardactions .good{background:var(--good-bg);color:var(--good-text);border-color:var(--good-border);}
 .cardactions .bad{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}
-.splash{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:#FAFAF7;color:#141414;opacity:1;transition:opacity .6s;}
-@media (prefers-color-scheme: dark){ .splash{background:#141414;color:#FFFFFF;} }
-:root[data-theme="dark"] .splash{background:#141414;color:#FFFFFF;}
-:root[data-theme="light"] .splash{background:#FAFAF7;color:#141414;}
+.splash{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:#FFFFFF;color:#000;opacity:1;transition:opacity .6s;}
+@media (prefers-color-scheme: dark){ .splash{background:#000;color:#FFFFFF;} }
+:root[data-theme="dark"] .splash{background:#000;color:#FFFFFF;}
+:root[data-theme="light"] .splash{background:#FFFFFF;color:#000;}
 .splash.fade{opacity:0;pointer-events:none;}
 .splash[hidden]{display:none;}
 .themebtn{position:fixed;top:14px;right:16px;z-index:6;padding:6px 10px;font-size:15px;line-height:1;background:var(--card);}
@@ -189,14 +191,29 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
 </details>
 
 <div class="bar">
-  <button class="modebtn" data-m="quiz">Quiz</button>
-  <button class="modebtn" data-m="match">Match</button>
-  <button class="modebtn" data-m="order">Order</button>
-  <button class="modebtn" data-m="cards">Cards</button>
-  <button class="modebtn" data-m="type">Type</button>
+  <button class="modebtn" data-m="quiz">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.75" y="2.75" width="14.5" height="14.5" rx="3.5"/><path d="M7.6 7.8a2.4 2.4 0 1 1 3.3 2.2c-.7.3-.9.8-.9 1.5"/><path d="M10 14.1h.01"/></svg>
+    <span>Quiz</span>
+  </button>
+  <button class="modebtn" data-m="match">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5.8" cy="14.2" r="3.1"/><circle cx="14.2" cy="5.8" r="3.1"/><path d="M8.1 11.9l3.8-3.8"/></svg>
+    <span>Match</span>
+  </button>
+  <button class="modebtn" data-m="order">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 16.5v-12M3.5 7.5l3-3 3 3"/><path d="M13.5 3.5v12M10.5 12.5l3 3 3-3"/></svg>
+    <span>Order</span>
+  </button>
+  <button class="modebtn" data-m="cards">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="3.4" width="9.4" height="12.6" rx="2" transform="rotate(8 11.7 9.7)"/><rect x="3.6" y="4" width="9.4" height="12.6" rx="2" transform="rotate(-6 8.3 10.3)"/></svg>
+    <span>Cards</span>
+  </button>
+  <button class="modebtn" data-m="type">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.2" y="5.4" width="15.6" height="9.8" rx="2"/><path d="M5.4 8.4h.01M8.4 8.4h.01M11.6 8.4h.01M14.6 8.4h.01M6.5 12h7"/></svg>
+    <span>Type</span>
+  </button>
 </div>
 
-<div id="feedback"></div>
+<div id="feedback" aria-live="polite"></div>
 
 <div id="pane-quiz">
   <div class="cardbox">
@@ -438,7 +455,7 @@ const SETS = [
 ];
 const $ = id => document.getElementById(id);
 const shuf = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
-let score=0, streak=0, mode=null;
+let score=0, streak=0, mode=null, round=0;
 const PRAISE = ["Nice.","Sharp.","Locked in.","Counsel is on fire.","Objection overruled. Correct.","The bar approves.","Clean hit.","Textbook."];
 const MISS = ["Not that one.","Close, but no.","The examiner frowns.","Strike that from the record.","Try again."];
 
@@ -549,7 +566,10 @@ function fb(ok,extra){
   $("feedback").textContent = m + (extra||"");
   $("feedback").style.color = ok ? "var(--good-text)" : "var(--bad-text)";
 }
+// Any pane change invalidates timers from the previous round (see later()).
+function later(fn,ms){ const r=round; setTimeout(()=>{ if(r===round) fn(); }, ms); }
 function show(m){
+  round++;
   mode=m;
   ["quiz","match","order","cards","type","end"].forEach(p=>$("pane-"+p).style.display = p===m ? "block":"none");
   document.querySelectorAll(".modebtn").forEach(b=>b.classList.toggle("active", b.dataset.m===m));
@@ -617,7 +637,7 @@ function quizNext(){
       if(ok){ qRight++; const bonus = streak>=3 ? streak : 0; setScore(10+bonus); fb(true, bonus?" +"+(10+bonus)+" (streak bonus)":" +10"); }
       else { setScore(-3); fb(false," -3"); }
       qNum++;
-      setTimeout(quizNext, ok?700:1400);
+      later(quizNext, ok?700:1400);
     };
     $("qOpts").appendChild(b);
   });
@@ -641,7 +661,7 @@ function matchStart(){
       if(mSel.dataset.k===b.dataset.k && mSel!==b){
         mSel.classList.remove("sel"); mSel.classList.add("done"); b.classList.add("done");
         mSel=null; mLeft--; setStreak(true); setScore(8); fb(true," +8"); srsMark(+b.dataset.k, true);
-        if(mLeft===0) setTimeout(()=>endScreen("All matched", mMiss+" misses. "+(mMiss===0?"Flawless.":mMiss<4?"Solid.":"Run it back for a clean round.")),600);
+        if(mLeft===0) later(()=>endScreen("All matched", mMiss+" misses. "+(mMiss===0?"Flawless.":mMiss<4?"Solid.":"Run it back for a clean round.")),600);
       } else {
         const a=mSel; a.classList.remove("sel"); a.classList.add("bad"); b.classList.add("bad");
         mSel=null; mMiss++; setStreak(false); setScore(-2); fb(false," -2");
@@ -673,9 +693,9 @@ function orderStart(){
         b.classList.add("done");
         $("oPlaced").textContent += (oIdx>0?"  ·  ":"") + r[0]+". "+r[1].split(" ").slice(0,3).join(" ");
         oIdx++; setStreak(true); setScore(6); fb(true," +6"); srsMark(r[0], true);
-        if(oIdx>=oDeck.length) setTimeout(()=>endScreen("Perfect sequence", oMiss+" wrong taps. "+(oMiss===0?"You know the order cold.":"Getting there.")),600);
+        if(oIdx>=oDeck.length) later(()=>endScreen(oMiss===0?"Perfect sequence":"Sequence complete", oMiss+" wrong tap"+(oMiss===1?"":"s")+". "+(oMiss===0?"You know the order cold.":"Getting there.")),600);
       } else {
-        b.classList.add("bad"); oMiss++; setStreak(false); setScore(-2); srsMark(r[0], false);
+        b.classList.add("bad"); oMiss++; setStreak(false); setScore(-2); srsMark(oDeck[oIdx][0], false);
         fb(false," That's Rule "+r[0]+". You need Rule "+oDeck[oIdx][0]+".");
         setTimeout(()=>b.classList.remove("bad"),500);
       }
