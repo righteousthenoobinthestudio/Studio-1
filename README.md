@@ -3,7 +3,7 @@
 Memorise your Rules of Professional Conduct (RPC 2023) with ease.
 
 A single-file, no-dependency web app for drilling all 78 rules of the Rules of
-Professional Conduct for Legal Practitioners. Open `rules-trainer.html` in any
+Professional Conduct for Legal Practitioners. Open `briefed.html` in any
 browser — it works offline.
 
 ## Games

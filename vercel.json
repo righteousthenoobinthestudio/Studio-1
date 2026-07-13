@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/rules-trainer.html" }
+    { "source": "/", "destination": "/briefed.html" }
+  ],
+  "redirects": [
+    { "source": "/rules-trainer.html", "destination": "/briefed.html", "permanent": true }
   ]
 }
