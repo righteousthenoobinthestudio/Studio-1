@@ -80,6 +80,18 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
   .tile,.opt,button{transition:background .15s,transform .15s,box-shadow .15s;}
   .tile:hover,.opt:not(:disabled):hover{transform:translateY(-1px);}
 }
+#mGrid,#oPool{border-radius:14px;}
+@keyframes missGlow{from{box-shadow:0 0 0 2px var(--bad-border),0 0 20px 2px var(--bad-border);}to{box-shadow:0 0 0 2px transparent,0 0 20px 2px transparent;}}
+@keyframes missShake{20%{transform:translateX(-4px);}40%{transform:translateX(4px);}60%{transform:translateX(-2px);}80%{transform:translateX(2px);}}
+.miss{animation:missGlow .65s ease-out;}
+@media (prefers-reduced-motion:no-preference){ .miss{animation:missGlow .65s ease-out,missShake .4s ease-out;} }
+@keyframes chipDip{from{background:var(--bad-bg);color:var(--bad-text);border-color:var(--bad-border);}}
+.chip.dip{animation:chipDip .8s ease-out;}
+.qdots{display:flex;gap:5px;flex-wrap:wrap;margin:14px 0 0;}
+.qdots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--border);}
+.qdots i.cur{border-color:var(--gold-border);background:var(--gold-bg);}
+.qdots i.ok{background:var(--good-border);border-color:var(--good-border);}
+.qdots i.no{background:var(--bad-border);border-color:var(--bad-border);}
 .bar{display:flex;gap:8px;align-items:center;justify-content:center;margin:1rem 0;flex-wrap:wrap;}
 .statsbar{display:flex;justify-content:center;align-items:center;gap:8px;margin:14px 0 0;font-size:14px;position:relative;}
 .restart{padding:4px 14px;font-size:14px;position:absolute;right:0;top:50%;transform:translateY(-50%);}
@@ -219,6 +231,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--gold-border);o
   <div class="cardbox">
     <p id="qText"></p>
     <div id="qOpts"></div>
+    <div id="qDots" class="qdots" aria-hidden="true"></div>
     <p id="qProg" class="muted" style="margin:8px 0 0;"></p>
   </div>
 </div>
@@ -558,7 +571,11 @@ LEN_CHOICES.forEach(c=>{
   $("lenBtns").appendChild(b);
 });
 
-function setScore(d){ score+=d; if(score<0)score=0; $("score").textContent=score; }
+function setScore(d){
+  score+=d; if(score<0)score=0; $("score").textContent=score;
+  if(d<0){ const c=$("score").parentElement; c.classList.remove("dip"); void c.offsetWidth; c.classList.add("dip"); }
+}
+function missFx(el){ el.classList.remove("miss"); void el.offsetWidth; el.classList.add("miss"); }
 function resetScore(){ score=0; streak=0; $("score").textContent=0; $("streak").textContent=0; }
 function setStreak(ok){ streak = ok ? streak+1 : 0; $("streak").textContent=streak; }
 function fb(ok,extra){
@@ -602,12 +619,22 @@ function rel(ms){
   return d===1 ? "tomorrow" : "in "+d+" days";
 }
 
-let qDeck=[], qPool=[], qNum=0, qRight=0;
+let qDeck=[], qPool=[], qNum=0, qRight=0, qRes=[];
 function quizStart(){
   resetScore();
   qPool=setRules();
   qDeck=shuf(qPool).slice(0, lenOf(qPool));
-  qNum=0; qRight=0; show("quiz"); quizNext();
+  qNum=0; qRight=0; qRes=[]; show("quiz"); quizNext();
+}
+function qDotsDraw(){
+  const d=$("qDots"); d.innerHTML="";
+  qDeck.forEach((_,i)=>{
+    const s=document.createElement("i");
+    if(qRes[i]===true) s.className="ok";
+    else if(qRes[i]===false) s.className="no";
+    else if(i===qNum) s.className="cur";
+    d.appendChild(s);
+  });
 }
 function quizNext(){
   if(qNum>=qDeck.length){ endScreen("Quiz complete", qRight+" of "+qDeck.length+" correct."); return; }
@@ -615,6 +642,7 @@ function quizNext(){
   const askNum = Math.random()<0.5;
   $("qText").textContent = askNum ? "Which is Rule "+cur[0]+"?" : "“"+cur[1]+"” is which rule?";
   $("qProg").textContent = "Question "+(qNum+1)+" of "+qDeck.length;
+  qDotsDraw();
   let others = qPool.filter(r=>r[0]!==cur[0]);
   if(others.length<3) others = RULES.filter(r=>r[0]!==cur[0]);
   const wrong = shuf(others).slice(0,3);
@@ -635,7 +663,8 @@ function quizNext(){
       }
       setStreak(ok); srsMark(cur[0], ok);
       if(ok){ qRight++; const bonus = streak>=3 ? streak : 0; setScore(10+bonus); fb(true, bonus?" +"+(10+bonus)+" (streak bonus)":" +10"); }
-      else { setScore(-3); fb(false," -3"); }
+      else { setScore(-3); fb(false," -3"); missFx(document.querySelector("#pane-quiz .cardbox")); }
+      qRes[qNum]=ok; qDotsDraw();
       qNum++;
       later(quizNext, ok?700:1400);
     };
@@ -664,7 +693,7 @@ function matchStart(){
         if(mLeft===0) later(()=>endScreen("All matched", mMiss+" misses. "+(mMiss===0?"Flawless.":mMiss<4?"Solid.":"Run it back for a clean round.")),600);
       } else {
         const a=mSel; a.classList.remove("sel"); a.classList.add("bad"); b.classList.add("bad");
-        mSel=null; mMiss++; setStreak(false); setScore(-2); fb(false," -2");
+        mSel=null; mMiss++; setStreak(false); setScore(-2); fb(false," -2"); missFx($("mGrid"));
         srsMark(+a.dataset.k, false); srsMark(+b.dataset.k, false);
         setTimeout(()=>{a.classList.remove("bad"); b.classList.remove("bad");},500);
       }
@@ -695,7 +724,7 @@ function orderStart(){
         oIdx++; setStreak(true); setScore(6); fb(true," +6"); srsMark(r[0], true);
         if(oIdx>=oDeck.length) later(()=>endScreen(oMiss===0?"Perfect sequence":"Sequence complete", oMiss+" wrong tap"+(oMiss===1?"":"s")+". "+(oMiss===0?"You know the order cold.":"Getting there.")),600);
       } else {
-        b.classList.add("bad"); oMiss++; setStreak(false); setScore(-2); srsMark(oDeck[oIdx][0], false);
+        b.classList.add("bad"); oMiss++; setStreak(false); setScore(-2); missFx($("oPool")); srsMark(oDeck[oIdx][0], false);
         fb(false," That's Rule "+r[0]+". You need Rule "+oDeck[oIdx][0]+".");
         setTimeout(()=>b.classList.remove("bad"),500);
       }
